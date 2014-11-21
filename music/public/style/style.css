@@ -1,0 +1,108 @@
+body {
+	background-color: #342F2A;
+	color: #999795;
+	width: 550px;
+	margin: 0 auto;
+	/*border: 1px solid red;*/
+	margin-top: 100px;
+}
+
+a {
+	color: #999795;
+	text-decoration: none;
+}
+
+li {
+	list-style: none;
+}
+
+a:hover {
+	color:  #FFF2D8;
+}
+
+/*#999795      #FFF2D8*/
+.playicon {
+	font-size: 28px !important;
+	color: #fff;
+	text-decoration: none;
+	margin-right: 10px;
+}
+
+.mods-controls {
+	display: inline-block;
+	margin-left: 298px; 
+	margin-bottom: 10px;
+}
+
+.progress {
+	height: 4px;
+	background-color: rgba(255, 255, 255, 0.1);
+	position: relative;
+	cursor: pointer;
+	width: 545px;
+	margin-bottom: 50px;
+}
+
+.progress-play {
+	height: 4px;
+	position: absolute;
+	background: #d8e3ff;
+	width: 50%;
+}
+
+.progress-slider {
+	border-radius: 50%;
+	position: absolute;
+	height: 12px;
+	width: 12px;
+	margin: -4px 0 0 -4px;
+	background: #fff2d8;
+	display: inline-block;
+}
+
+.function-btn {
+	display: inline-block;
+	margin-left: 412px;
+	margin-bottom: 20px;
+	position: relative;
+}
+
+.upload {
+	font-size: 24px;
+	margin-right: 15px;
+}
+
+.song-list {
+	position: relative;
+	height: 30px;
+	line-height: 30px;
+}
+
+.song-download {
+	position: absolute;
+	right: 57px;
+}
+
+.song-delete {
+	position: absolute;
+	right: 14px;
+}
+
+.play-list {
+	font-size: 13px;
+}
+
+#file-upload {
+	height: 20px;
+	width: 20px;
+	position: absolute;
+	opacity: 0;
+	cursor: pointer;
+}
+
+#upload-container {
+	height: 20px;
+	width: 20px;
+}
+
+
