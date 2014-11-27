@@ -62,7 +62,7 @@ a:hover {
 
 .function-btn {
 	display: inline-block;
-	margin-left: 412px;
+	margin-left: 361px;
 	margin-bottom: 20px;
 	position: relative;
 }
@@ -80,29 +80,38 @@ a:hover {
 
 .song-download {
 	position: absolute;
-	right: 57px;
+	right: 113px;
 }
 
 .song-delete {
 	position: absolute;
-	right: 14px;
+	right: 28px;
+	font-size: 18px;
 }
 
 .play-list {
 	font-size: 13px;
 }
 
-#file-upload {
+#fileUpload {
 	height: 20px;
 	width: 20px;
 	position: absolute;
 	opacity: 0;
 	cursor: pointer;
+	top: 4px;
 }
 
-#upload-container {
-	height: 20px;
-	width: 20px;
+#clearAll {
+	margin-left: 45px;
+}
+
+.function-btn .hover-add {
+	color:  #FFF2D8; 
+}
+
+.list-current .song-name {
+	color: #FFF2D8;
 }
 
 

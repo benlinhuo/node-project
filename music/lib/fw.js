@@ -1,6 +1,9 @@
 /*
   框架
 */
+var http = require('http');
+var url = require('url');
+
 module.exports = App; 
 
 /*
@@ -12,41 +15,59 @@ module.exports = App;
 function App() {
 	//中间件
 	this.midList = [];
-	var index = 0;//中间件执行的顺序
-	this.server = http.createSever(hanlder);
+	this.server = http.createServer(handler);
 
 	//路由
 	this.getHandlers = {};
 	this.postHanlers = {};
+	var self = this;
 
 	function handler(req, res) {
+		var index = 0;//中间件执行的顺序
 		//默认执行第一个middleware，由next带动执行下一个middleware
-		if (!!this.midList.length) {
-			index++;
-			this.midList[0](req, res, next);
-			return;
+		if (!!self.midList.length) {
+			self.midList[0](req, res, next);
 		}
 
 		function next() {
-			if (index < this.midList.length) {
-				this.midList[index](req, res, next);
-				index++:
+			if (index < (self.midList.length - 1)) {
+				index++;
+				self.midList[index](req, res, next);
+			} else {
+				/*
+				  以下对于处理route的部分，如果直接放在next之外，则在中间件中出现异步的情况，执行“处理route”部分代码。
+				  这时会出现在异步执行之前，因为执行该部分代码，就直接res.statusCode = 404; res.end()了。
+				*/
+				//处理route
+				var pathname = url.parse(req.url).pathname;
+				var isexist = false;
+				if (req.method == 'GET') {
+					self.getHandlers[pathname] && (self.getHandlers[pathname](req, res), isexist = true);
+
+				} else if (req.method == 'POST') {
+					self.postHanlers[pathname] && (self.postHanlers[pathname](req, res), isexist = true);
+				}
+				if (!isexist) {
+					res.statusCode = 404;
+					res.end();
+				}
 			}
 		}
 
 		//处理route
-		var pathname = url.parse(req.url).pathname;
-		var isexist = false;
-		if (req.method == 'GET') {
-			this.getHandlers[pathname] && (this.getHandlers[pathname](req, res), isexist = true);
+		// var pathname = url.parse(req.url).pathname;
+		// var isexist = false;
+		// if (req.method == 'GET') {
+		// 	self.getHandlers[pathname] && (self.getHandlers[pathname](req, res), isexist = true);
 
-		} else if (req.method == 'POST') {
-			this.postHanlers[pathname] && (this.postHanlers[pathname](req, res), isexist = true);
-		}
-		if (!isexist) {
-			res.statusCode = 404;
-			res.end();
-		}
+		// } else if (req.method == 'POST') {
+		// 	self.postHanlers[pathname] && (self.postHanlers[pathname](req, res), isexist = true);
+		// }
+		// if (!isexist) {
+		// 	res.statusCode = 404;
+		// 	res.end();
+		// }
+	
 	}
 }
 
@@ -65,3 +86,5 @@ App.prototype.post = function(route, fn) {
 App.prototype.listen = function(port) {
 	this.server.listen.call(this.server, port);
 }
+
+
