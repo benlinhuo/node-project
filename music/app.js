@@ -49,4 +49,6 @@ console.log('listening at port: 3001');
 // 1. 小图标：favicon
 // 2. form表单上传文件
 // 3. 下载文件（读取出来的文件内容，如何转化为buffer）
-// 4. 同步读取文件，如何检测错误
+
+//CMD:Common Module Definition
+

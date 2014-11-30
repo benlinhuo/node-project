@@ -24,16 +24,19 @@ var audioPlayer = {
 		}
 		//如果指定歌曲是正在播放的歌曲，则不做处理
 		if (index == this.currIndex) {
+			this.audioObj.play();
 			return;
 		}
 		//否则，需要先停止当前歌曲的播放，设置index指向的歌曲url进行播放
-		this.audioObj.stop();
-		this.audioObj.src = this.playList[index].url;
+		this.audioObj.stop && this.audioObj.stop();
+		//中文在请求url中需要编码
+		this.audioObj.src = encodeURI(this.playList[index].url);
+		this.currIndex = index;
+		var self = this;
 		//歌曲已经载入完全完成
 		$(this.audioObj).on('canplaythrough', function() {
-			this.audioObj.play();
+			self.audioObj.play();
 		});
-		currIndex = index;
 	},
 
 	//暂停
@@ -42,7 +45,7 @@ var audioPlayer = {
 	},
 
 	//下一首
-	palyNext: function() {
+	playNext: function() {
 		this.play(this.currIndex + 1);
 	},
 

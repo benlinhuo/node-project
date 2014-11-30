@@ -23,6 +23,7 @@ function App() {
 	var self = this;
 
 	function handler(req, res) {
+		console.log(req.url, '1111111111')
 		var index = 0;//中间件执行的顺序
 		//默认执行第一个middleware，由next带动执行下一个middleware
 		if (!!self.midList.length) {

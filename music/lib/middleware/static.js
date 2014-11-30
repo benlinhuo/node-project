@@ -6,30 +6,110 @@
 
 var url = require('url');
 var fs = require('fs');
+var domain = require('domain');
+var emitter = require('events').EventEmitter;
 
 
 module.exports = function(dir) { 
 
 	return function(req, res, next) {
-		var pathname = (dir + url.parse(req.url).pathname).replace(/\/$/, '');
-		fs.readFile(pathname, function(err, data) { 
-			//如果有错的话，表示请求的不是静态文件，可能是个接口
-			if (err) {
-				next();
-				return;
-			} 
-
-			//如果正确读取到了数据data，则可以返回该请求，结束它了
-			res.writeHead(200, {
-				'Vary':'Accept-Encoding'
-			})
-			res.write(data);
-			res.end();
+		var pathname = decodeURI(dir + url.parse(req.url).pathname).replace(/\/$/, '');
+		var d = domain.create();
+		d.on('error', function() {
+			console.log('read file error!');
+			next();
 		});
-
+		d.add(fs);
+		d.run(function() {
+			var stream = fs.createReadStream(pathname);
+			if (stream && stream.pipe) {
+				stream.pipe(res);
+			} else {
+				next();
+			}
+		});
 	}	
 
 }
+
+/// express框架send.js
+// SendStream.prototype.stream = function(path, options){
+//   // TODO: this is all lame, refactor meeee
+//   var self = this;
+//   var res = this.res;
+//   var req = this.req;
+
+//   // pipe
+//   var stream = fs.createReadStream(path, options);
+//   this.emit('stream', stream);
+//   stream.pipe(res);
+
+//   // socket closed, done with the fd
+//   req.on('close', stream.destroy.bind(stream));
+
+//   // error handling code-smell
+//   stream.on('error', function(err){
+//     // no hope in responding
+//     if (res._header) {
+//       console.error(err.stack);
+//       req.destroy();
+//       return;
+//     }
+
+//     // 500
+//     err.status = 500;
+//     self.emit('error', err);
+//   });
+
+//   // end
+//   stream.on('end', function(){
+//     self.emit('end');
+//   });
+// };
+
+
+
+
+
+
+
+//读取大文件，当是大文件时，使用readFile读取会抛出err。思路：使用流读取
+// function readBigFile(pathname, res, next) {
+// 	console.log(pathname)
+// 	var d = domain.create();
+// 	d.on('error', function() {
+// 		console.log('read file error!');
+// 		next();
+// 	});
+// 	d.add(fs);
+// 	d.run(function() {
+// 		var rs = fs.createReadStream(pathname, {highWaterMark: 5});
+// 		var dataArr = [], len = 0, data;
+// 		rs.on('data', function(chunk) {
+// 			dataArr.push(chunk);
+// 			len +=  chunk.length;
+// 		});
+
+// 		rs.on('end', function() {
+// 			data = Buffer.concat(dataArr, len);
+// 			console.log(data.toString());
+// 			res.writeHead(200, {
+// 				'Vary':'Accept-Encoding'
+// 			});
+// 			res.end(data);
+// 		});
+// 	});
+// }
+
+
+
+
+
+
+
+
+
+
 
 
 

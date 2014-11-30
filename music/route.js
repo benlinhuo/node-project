@@ -22,6 +22,7 @@ module.exports = function(app) {
 
 	//下载歌曲
 	app.get('/downloadSong', function(req, res) {
+		console.log(req.param.name);
 		res.download(req.param.name);
 	});
 

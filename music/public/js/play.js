@@ -1,6 +1,8 @@
 //dom ready
 $(function() {
 	var listContainer = $('#songContainer');
+	var title = $('#songTitle');
+	var status = 'paused';//表示当前是否处于播放状态：paused；playing
 	(function() {
 		init();
 		bindEvent();
@@ -36,13 +38,16 @@ $(function() {
 				results.forEach(function(v, i) {
 					//数据保存至内存中
 					//因为midstatic中间件默认的文件路径是.../music ，所以我们从public开始.此处我们自己构造url
-					audioPlayer.add(v, '/public/upload' + v);
+					audioPlayer.add(v, '/public/upload/' + v);
 					str += '<li class="song-list" index="' + i + '">' + 
 					        '<a href="javascript:void(0);" class="song-name">' + (i + 1) + '.  ' + v + '</a>' + 
 					        '<a href="javascript:void(0);" class="song-download iconfont">&#xe64c;</a>' +
 					        '<a href="javascript:void(0);" class="song-delete iconfont">&#xf003f;</a>';
 				});
 				listContainer.html(str);
+				audioPlayer.play(0);
+				switchChange();
+				status = 'playing';		
 			} else {
 				alert('获取歌曲库失败');
 			}
@@ -58,6 +63,7 @@ $(function() {
 		clearAllSongs();
 		playPrev();
 		playNext();
+		selectedSong();
 		pauseOrPlay();
 		controlProcess();
 	}
@@ -90,6 +96,10 @@ $(function() {
 			//删除歌曲，通过歌曲名称匹配
 			var name = audioPlayer.playList[index].name;
 			var _this = this;
+			if (index == audioPlayer.currIndex) {
+				audioPlayer.playNext();
+			}
+
 			//后台删除
 			$.ajax({
 				type: 'GET',
@@ -133,6 +143,7 @@ $(function() {
 					if (data.status == 'ok') {
 						listContainer.html('');
 						audioPlayer.clearAll();
+						startPause();
 						alert('清空成功!');
 					} else {
 						alert('清空失败!');
@@ -158,6 +169,15 @@ $(function() {
 		});
 	}
 
+	//直接选中某首歌曲进行播放
+	function selectedSong() {
+		listContainer.on('click', '.song-name', function() {
+			var index = $(this).parent('li').attr('index');
+			audioPlayer.play(index);
+			switchChange();
+		});
+	}
+
 	//暂停/播放
 	function pauseOrPlay() {
 		$('#btn-playpause').on('click', function() {
@@ -166,15 +186,26 @@ $(function() {
 				switchChange();
 			}
 			//暂停
-			if (audioPlayer.paused) {
-				//播放
-				audioPlayer.play();
-				$(this).removeClass('iconfont2').addClass('iconfont').html('&#xe662;');
+			if (status == 'paused') {
+				startPlay($(this));
 			} else {
-				audioPlayer.pause();
-				$(this).removeClass('iconfont').addClass('iconfont2').html('&#xe6ac;');
+				startPause($(this));
 			}
 		});
+	}
+
+	//播放
+	function startPlay(ele) {
+		audioPlayer.play(audioPlayer.currIndex);
+		ele.removeClass('iconfont2').addClass('iconfont').html('&#xe662;');
+		status = 'playing';
+	}
+
+	//暂停
+	function startPause(ele) {
+		audioPlayer.pause();
+		ele.removeClass('iconfont').addClass('iconfont2').html('&#xe6ac;');
+		status = 'paused';
 	}
 
 	//进度条的控制
@@ -200,11 +231,10 @@ $(function() {
 	}
 
 	//设置切换，界面的变化
-	var title = $('#songTitle');
 	function switchChange() {
 		title.html(audioPlayer.playList[audioPlayer.currIndex].name);
 		var listSongs = listContainer.find('.song-list');
-		listContainer.removeClass('list-current');
-		listContainer.eq(audioPlayer.currIndex).addClass('list-current');
+		listSongs.removeClass('list-current');
+		listSongs.eq(audioPlayer.currIndex).addClass('list-current');
 	}
 });

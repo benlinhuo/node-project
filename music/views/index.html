@@ -3,14 +3,14 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 	<title>音乐人</title>
-	<link rel='icon' href="../public/img/music.png" />
 	<link rel='stylesheet' type="text/css" href="../public/iconfont/iconfont.css" />
 	<link rel='stylesheet' type="text/css" href="../public/style/style.css" />
 	<script src='../public/js/jQuery-1.7.1.js'></script>
+	<link rel='icon' href="../public/img/music.png" />
 </head>
 <body>
 	<div class="play">
-		<div>
+		<div style="position: relative;">
 			<span class="song-title" id="songTitle">我的心里是满的</span>
 			<div class="mods-controls">
 				<a href="javscript:void(0);" id='btn-prev' title='上一首' class="iconfont playicon">&#xf0016;</a>
@@ -53,11 +53,11 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-	$('#fileUpload').on('mouseenter', function() {
-		$('#uploadIcon').addClass('hover-add');
-	}).on('mouseleave', function() {
-		$('#uploadIcon').removeClass('hover-add');
-	});
+	// $('#fileUpload').on('mouseenter', function() {
+	// 	$('#uploadIcon').addClass('hover-add');
+	// }).on('mouseleave', function() {
+	// 	$('#uploadIcon').removeClass('hover-add');
+	// });
 	</script>
 	<script src='../public/js/play.js'></script>
 	<script src='../public/js/player.js'></script>
